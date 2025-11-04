@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ejercicio: Web Components vs Lit</title>
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; 
+      padding: 24px; 
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #f9f9f9;
+    }
+    section { 
+      border: 1px solid #ddd; 
+      padding: 16px; 
+      margin-bottom: 16px; 
+      border-radius: 8px; 
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; }
+    h2 { margin-top: 0; color: #555; }
+    .controls { 
+      margin-bottom: 12px; 
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    label { 
+      margin-right: 8px; 
+      font-weight: 500;
+    }
+    input {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    button:hover {
+      background: #0052a3;
+    }
+    pre.json { 
+      background: #f7f7f7; 
+      padding: 12px; 
+      border-radius: 6px; 
+      overflow: auto;
+      font-size: 14px;
+    }
+    .event-display {
+      padding: 8px 12px;
+      background: #e8f4fd;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .component-demo {
+      margin: 16px 0;
+      padding: 16px;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Ejercicio: Web Components (stand-alone) y con Lit</h1>
+  <p>Interactúa con los ejemplos para ver diferencias en implementación, reactividad y estilos encapsulados.</p>
+
+  <section>
+    <h2>📦 Componente Vanilla (Custom Element + Shadow DOM)</h2>
+    <p>Implementación pura usando APIs nativas del navegador.</p>
+    
+    <div class="controls">
+      <label>Nombre (atributo): <input id="vanilla-attr" value="Ana" placeholder="Cambia por atributo"></label>
+      <label>Nombre (propiedad): <input id="vanilla-prop" value="Luis" placeholder="Cambia por propiedad"></label>
+      <button id="apply-vanilla">Aplicar cambios</button>
+    </div>
+
+    <div class="component-demo">
+      <vanilla-greeter id="vanilla" name="María">
+        <p>🎉 Contenido pasado via &lt;slot&gt;</p>
+      </vanilla-greeter>
+    </div>
+
+    <p>Último evento emitido: <span class="event-display" id="vanilla-event">(ninguno aún)</span></p>
+  </section>
+
+  <section>
+    <h2>⚡ Componente Lit</h2>
+    <p>Implementación usando Lit con propiedades reactivas y templates declarativos.</p>
+    
+    <div class="controls">
+      <label>Nombre (atributo): <input id="lit-attr" value="Lucia" placeholder="Cambia por atributo"></label>
+      <label>Nombre (propiedad): <input id="lit-prop" value="Pablo" placeholder="Cambia por propiedad"></label>
+      <button id="apply-lit">Aplicar cambios</button>
+    </div>
+
+    <div class="component-demo">
+      <lit-greeter id="lit" name="Diego">
+        <p>🚀 Slot del componente Lit</p>
+      </lit-greeter>
+    </div>
+
+    <p>Último evento emitido: <span class="event-display" id="lit-event">(ninguno aún)</span></p>
+  </section>
+
+  <section>
+    <h2>📊 Datos de ejemplo (nombres extraídos de JSON)</h2>
+    <p>Ejemplo inspirado en tu archivo JSON original con nombres de navegatorInstance.instances.text:</p>
+    <pre class="json" id="names-json"></pre>
+  </section>
+
+  <script type="module" src="./vanilla-component.js"></script>
+  <script type="module" src="./lit-component.js"></script>
+  <script>
+    // Configuración de controles para componente vanilla
+    document.getElementById('apply-vanilla').addEventListener('click', () => {
+      const el = document.getElementById('vanilla');
+      const attr = document.getElementById('vanilla-attr').value;
+      const prop = document.getElementById('vanilla-prop').value;
+
+      console.log('🔧 Aplicando a vanilla:', { attr, prop });
+      
+      // Establecer por atributo (se refleja en HTML)
+      el.setAttribute('name', attr);
+      
+      // Establecer por propiedad (más directo)
+      setTimeout(() => {
+        el.name = prop; // esto debe ganar sobre el atributo
+      }, 100);
+    });
+
+    // Configuración de controles para componente Lit
+    document.getElementById('apply-lit').addEventListener('click', () => {
+      const el = document.getElementById('lit');
+      const attr = document.getElementById('lit-attr').value;
+      const prop = document.getElementById('lit-prop').value;
+      
+      console.log('⚡ Aplicando a lit:', { attr, prop });
+      
+      // En Lit, las propiedades reactivas tienen prioridad
+      el.setAttribute('name', attr);
+      setTimeout(() => {
+        el.name = prop; // Lit maneja automáticamente la reactividad
+      }, 100);
+    });
+
+    // Escuchar eventos custom de ambos componentes
+    document.getElementById('vanilla').addEventListener('greet', (e) => {
+      console.log('📦 Evento vanilla greet:', e.detail);
+      document.getElementById('vanilla-event').textContent = JSON.stringify(e.detail);
+    });
+
+    document.getElementById('lit').addEventListener('greet', (e) => {
+      console.log('⚡ Evento lit greet:', e.detail);
+      document.getElementById('lit-event').textContent = JSON.stringify(e.detail);
+    });
+
+    // Datos de ejemplo (inspirados en tu JSON original)
+    const exampleNames = [
+      "DAVID PUENTE VICENTE",
+      "HUGO DANIEL NAJERA ALVA", 
+      "BENJAMIN MEDINA SANDOVAL",
+      "DANIEL GABINO MENDEZ ORTEGA",
+      "DANIEL MARTIN JONES LERTXUNDI",
+      "DIEGO ARMANDO AVILA SILVA",
+      "ENRIQUE JOSE K CORNISH STANTON",
+      "HECTOR ADRIAN MEDINA PEREZ",
+      "JOSE NAFFAH MAHUAD",
+      "JOY RAJ SEN .",
+      "LUIS ANGEL RODRIGUEZ AMESTOY",
+      "MARIA CLAUDIA CANTO MARTINEZ",
+      "NADYELY FLORES AGUILAR",
+      "NURY FERNANDEZ CASTILLA",
+      "RICARDO MANGE AGUAYO",
+      "SALVADOR SANDOVAL TAJONAR",
+      "CLARA DEL CARMEN MARTINEZ GUZMAN",
+      "ERIKA BERENICE SANCHEZ NAVARRETE",
+      "EULISES ALEJANDRO ALVAREZ VIDALS"
+    ];
+    
+    document.getElementById('names-json').textContent = JSON.stringify({
+      totalNames: exampleNames.length,
+      names: exampleNames
+    }, null, 2);
+  </script>
+</body>
+</html>
