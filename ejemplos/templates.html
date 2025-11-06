@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de Template</title>
+</head>
+<body>
+    <h1>Ejemplo de Template en HTML</h1>
+
+    <!-- Definición del template -->
+    <template id="miTemplate">
+        <div>
+            <h2>Título desde el Template</h2>
+            <p>Este es un párrafo generado a partir del template.</p>
+        </div>
+    </template>
+
+    <button id="mostrar">Mostrar Contenido del Template</button>
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById('mostrar').addEventListener('click', function() {
+            // Obtener el template
+            const template = document.getElementById('miTemplate');
+            // Clonar el contenido del template
+            const clon = document.importNode(template.content, true);
+            // Insertar el clon en el DOM
+            document.getElementById('resultado').appendChild(clon);
+        });
+    </script>
+</body>
+</html>

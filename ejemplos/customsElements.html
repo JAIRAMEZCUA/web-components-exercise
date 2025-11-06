@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Element - Ejemplo Básico</title>
+  </head>
+  <body>
+    <h1>🎯 Custom Element - Ejemplo Básico</h1>
+
+    <!-- Usar el custom element -->
+    <custom-button>Button1</custom-button>
+    <custom-button>Button2</custom-button>
+
+    <!-- Usar el custom element Button  -->
+    <button is="custom-button-html">Button3</button>
+    <script>
+      class CustomButton extends HTMLElement {
+        constructor() {
+          super(); // Siempre llamar a super() primero
+          this.addEventListener("click", () => {
+            alert("¡Botón personalizado clickeado!");
+          });
+        }
+      }
+      // IMPORTANTE: El nombre DEBE tener un guion (-)
+      customElements.define("custom-button", CustomButton);
+
+      class CustomButtonHtml extends HTMLButtonElement {
+        constructor() {
+          super(); // Siempre llamar a super() primero
+          this.addEventListener("click", () => {
+            alert("¡Botón personalizado clickeado!");
+          });
+        }
+      }
+      customElements.define("custom-button-html", CustomButtonHtml, {
+        extends: "button",
+      });
+
+      // Diferencia entre ambos:
+      // <custom-button> es un elemento completamente nuevo.
+      // <button is="custom-button-html"> es una mejora de un elemento existente.
+
+      // Nota importante: Todos estos requieren el parámetro { extends: 'elemento' } al definirlos y se usan con el atributo is="".
+      /*
+            HTMLButtonElement - <button>
+            HTMLInputElement - <input>
+            HTMLTextAreaElement - <textarea>
+            HTMLSelectElement - <select>
+            HTMLOptionElement - <option>
+            HTMLFormElement - <form>
+            HTMLLabelElement - <label>
+            HTMLFieldSetElement - <fieldset>
+            HTMLLegendElement - <legend>
+            HTMLDataListElement - <datalist>
+            HTMLOutputElement - <output> */
+    </script>
+  </body>
+</html>
