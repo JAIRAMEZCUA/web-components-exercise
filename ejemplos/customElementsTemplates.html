@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Element - Templates</title>
+  </head>
+  <body>
+    <h1>🎯 Custom Element - Templates</h1>
+
+    <!-- Usar el custom element -->
+    <custom-saludo>Saludo uno</custom-saludo>
+    <custom-saludo>Saludo dos</custom-saludo>
+
+    <!-- Definición del template -->
+    <template id="miTemplate">
+      <p>Este es un párrafo generado a partir del template.</p>
+    </template>
+
+    <script>
+      class CustomSaludo extends HTMLElement {
+        constructor() {
+          super();
+          this.addEventListener("click", (event) => {
+            // Obtener información del elemento clickeado
+            const elementoTexto = this.textContent;
+            const elementoTag = this.tagName.toLowerCase();
+            
+            console.log(`Click en: <${elementoTag}> con texto: "${elementoTexto}"`);
+            
+            // Obtener el template
+            const template = document.getElementById("miTemplate");
+            // Clonar el contenido del template
+            const clon = document.importNode(template.content, true);
+            
+            // MODIFICAR el contenido del template según el custom element clickeado
+            const parrafo = clon.querySelector('p');
+            parrafo.textContent = `Este párrafo fue generado desde: "${elementoTexto}"`;
+            parrafo.style.color = elementoTexto.includes('uno') ? 'blue' : 'green';
+            parrafo.style.fontWeight = 'bold';
+            
+            // Insertar el clon modificado en el DOM
+            this.appendChild(clon);
+          });
+        }
+      }
+
+      customElements.define("custom-saludo", CustomSaludo);
+    </script>
+  </body>
+</html>
